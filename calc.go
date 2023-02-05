@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/image/font"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -96,8 +97,21 @@ func (c *Calculation) savePNG(fn string, data [][]float64) {
 		}
 		xys = append(xys, xy)
 	}
+	title := filepath.Base(fn)
+	p.Title.Text = title[:len(title)-4]
+	p.Title.Padding = 5
+	p.Title.TextStyle.Font.Size = 14
+	p.Title.TextStyle.Font.Weight = font.WeightBold
 	p.X.Label.Text = c.Data[0]
+	p.X.Label.TextStyle.Font.Size = 14
+	p.X.Tick.Label.Font.Size = 14
 	p.Y.Label.Text = c.Data[len(c.Data)-1]
+	p.Y.Label.TextStyle.Font.Size = 14
+	p.Y.Tick.Label.Font.Size = 14
+	p.Y.Tick.Marker = plot.TickerFunc(func(min, max float64) []plot.Tick {
+		var def plot.DefaultTicks
+		return append(def.Ticks(min, max), plot.Tick{Value: 0, Label: "0"})
+	})
 	g := plotter.NewGrid()
 	p.Add(g)
 	line, err := plotter.NewLine(xys)
