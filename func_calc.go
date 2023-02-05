@@ -6,7 +6,11 @@ import (
 )
 
 func (c *Calculation) calc(x string) {
-	for _, p := range c.Args.Params() {
+	params := []map[string]any{{}}
+	if len(c.Args) > 0 {
+		params = c.Args.Params()
+	}
+	for _, p := range params {
 		var data [][]float64
 		for _, iv := range c.IVar {
 			p[x] = iv
