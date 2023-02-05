@@ -33,7 +33,7 @@ func (c *Calculation) bisect(iv string, param *map[string]any) {
 		miny := calc(minx)
 		maxy := calc(maxx)
 		if ss(miny, maxy) {
-			panic(fmt.Errorf("函数值在'%v'和'%v'两处同号", minx, maxx))
+			panic(fmt.Errorf("%s: 函数值在'%v'和'%v'两处同号", c.dump(*param), minx, maxx))
 		}
 		midx := (minx + maxx) / 2
 		midy := calc(midx)

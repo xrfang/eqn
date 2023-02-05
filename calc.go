@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"golang.org/x/image/font"
@@ -23,6 +24,15 @@ type Calculation struct {
 	max  float64
 	nfmt string //浮点数格式
 	wdir string //工作目录
+}
+
+func (c *Calculation) dump(param map[string]any) string {
+	var kv []string
+	for k, v := range param {
+		kv = append(kv, fmt.Sprintf("%s="+c.nfmt, k, v))
+	}
+	sort.Strings(kv)
+	return "[" + strings.Join(kv, ",") + "]"
 }
 
 func (c *Calculation) Validate(r *Recipe) {
@@ -130,6 +140,9 @@ func (c *Calculation) call(p *map[string]any) (float64, string) {
 		assert(err)
 		rk = e.n
 		rv = res.(float64)
+		if err := plotter.CheckFloats(rv); err != nil {
+			panic(fmt.Errorf("%s; err=%v", c.dump(*p), err))
+		}
 		(*p)[rk] = rv
 	}
 	return rv, rk
