@@ -6,8 +6,8 @@ import (
 )
 
 func (c *Calculation) calc(x string) {
-	var data [][]float64
 	for _, p := range c.Args.Params() {
+		var data [][]float64
 		for _, iv := range c.IVar {
 			p[x] = iv
 			c.call(&p)
