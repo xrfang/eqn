@@ -1,6 +1,9 @@
 package main
 
-import "path/filepath"
+import (
+	"fmt"
+	"path/filepath"
+)
 
 func (c *Calculation) calc(x string) {
 	var data [][]float64
@@ -9,8 +12,11 @@ func (c *Calculation) calc(x string) {
 			p[x] = iv
 			c.call(&p)
 			var row []float64
-			for _, c := range c.Data {
-				v := p[c].(float64)
+			for _, col := range c.Data {
+				v, ok := p[col].(float64)
+				if !ok {
+					panic(fmt.Errorf("变量'%s'在结果中不存在", col))
+				}
 				row = append(row, v)
 			}
 			data = append(data, row)
