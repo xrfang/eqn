@@ -79,6 +79,9 @@ func (c *Calculation) savePNG(fn string, data [][]float64) {
 	p.Y.Min = 1e300
 	for _, r := range data {
 		xy := plotter.XY{X: r[0], Y: r[len(r)-1]}
+		if err := plotter.CheckFloats(xy.X, xy.Y); err != nil {
+			panic(fmt.Errorf("savePNG: x=%v; y=%v; err=%v", xy.X, xy.Y, err))
+		}
 		if p.X.Min > xy.X {
 			p.X.Min = xy.X
 		}
