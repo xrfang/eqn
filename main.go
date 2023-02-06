@@ -5,19 +5,33 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 )
 
 func main() {
+	fnc := flag.Bool("funcs", false, "show built-in functions")
 	ver := flag.Bool("version", false, "show version info")
 	flag.Usage = func() {
 		fmt.Printf("Equation Solver and Plotter %s\n", verinfo())
-		fmt.Printf("\nUSAGE: %s [OPTIONS] <recipe.eqn>\n", filepath.Base(os.Args[0]))
+		fmt.Printf("\nUSAGE: %s [OPTIONS] [recipe.eqn]\n", filepath.Base(os.Args[0]))
 		fmt.Println("\nOPTIONS")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 	if *ver {
 		fmt.Println(verinfo())
+		os.Exit(0)
+	}
+	if *fnc {
+		var fs []string
+		for f := range lib {
+			fs = append(fs, f)
+		}
+		sort.Slice(fs, func(i, j int) bool {
+			return strings.ToLower(fs[i]) < strings.ToLower(fs[j])
+		})
+		fmt.Println(strings.Join(fs, ", "))
 		os.Exit(0)
 	}
 	if len(flag.Args()) == 0 {
