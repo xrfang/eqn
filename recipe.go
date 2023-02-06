@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Knetic/govaluate"
+	"gonum.org/v1/plot/font"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,6 +15,8 @@ type (
 	Config struct {
 		Precision int     `yaml:"precision"`
 		Epsilon   float64 `yaml:"epsilon"`
+		ChartW    int     `yaml:"chart_w"`
+		ChartH    int     `yaml:"chart_h"`
 	}
 	Recipe struct {
 		Conf Config
@@ -33,9 +36,6 @@ func LoadRecipe(fn string) (r *Recipe, err error) {
 	r.path, _ = filepath.Abs(fn)
 	r.path = filepath.Dir(r.path)
 	assert(yaml.NewDecoder(f).Decode(r))
-	if r.Conf.Precision < 0 || r.Conf.Precision > 9 {
-		r.Conf.Precision = 0
-	}
 	assert(r.Func != nil, "函数未定义")
 	xr := regexp.MustCompile(`(?i)^([a-z][a-z0-9]{0,8})\s*=\s*(.*?)\s*$`)
 	for _, def := range r.Func.Expr {
@@ -58,5 +58,18 @@ func LoadRecipe(fn string) (r *Recipe, err error) {
 	if r.Root != nil {
 		r.Root.Validate(r)
 	}
+	if r.Conf.Precision < 0 || r.Conf.Precision > 10 {
+		r.Conf.Precision = 0
+	}
+	if r.Conf.ChartW <= 0 {
+		r.Conf.ChartW = 900
+	}
+	if r.Conf.ChartH <= 0 {
+		r.Conf.ChartH = 600
+	}
+	imgW = font.Length(r.Conf.ChartW)
+	imgH = font.Length(r.Conf.ChartH)
 	return
 }
+
+var imgW, imgH font.Length
